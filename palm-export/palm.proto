@@ -1,0 +1,215 @@
+/*
+ * Copyright (c) 2011
+ *      Jon Schewe.  All rights reserved
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * I'd appreciate comments/suggestions on the code jpschewe@mtu.net
+ */
+
+package net.mtu.eggplant.google;
+
+message CategoryAppInfo {
+  repeated bool renamed = 1; // size 16, which categories have changed names
+  repeated string name = 2; // size 16, names of categories
+}
+
+message Calendar {
+  required CategoryAppInfo category = 1;
+  required int32 start_of_week = 2;
+  optional bytes internal = 3;
+  repeated CalendarEvent events = 4;
+}
+
+message PalmRecord {
+  required int32 category = 1; // inside into CategoryAppInfo.name
+  repeated RecAttributes attributes = 2; // bitmask
+  required uint64 uid = 3; // palm uid
+}
+
+message CalendarEvent {
+  required PalmRecord palm_record = 20;
+  required bool event = 1;
+  required Timestamp begin = 2;
+  required Timestamp end = 3;
+  required bool alarm = 4;
+  optional int32 advance = 5;
+  optional CalendarAdvanceTypes advance_units = 6;
+  required CalendarRepeatType repeat_type = 7;
+  optional bool repeatForever = 8;
+  optional Timestamp repeat_end = 9;
+  optional int32 repeat_frequency = 10;
+  optional CalendarDayOfMonthType repeat_day = 11;
+  repeated bool repeat_days = 12 [packed=true];
+  optional int32 repeat_weekstart = 13;
+  repeated Timestamp exception = 14;
+  optional string description = 15;
+  optional string note = 16;
+  optional string location = 17;
+  repeated Blob blob = 18;
+  optional Timezone tz = 19;
+}
+
+/**
+ * Unix struct tm
+ */
+message Timestamp {
+  required int32 tm_sec = 1;
+  required int32 tm_min = 2;
+  required int32 tm_hour = 3;
+  required int32 tm_mday = 4;
+  required int32 tm_mon = 5;
+  /**
+   * Years since 1900
+   */
+  required int32 tm_year = 6;
+  /**
+   * days since Sunday
+   */
+  required int32 tm_wday = 7;
+  /**
+   * days since January 1
+   */
+  required int32 tm_yday = 8;
+  /**
+   * daylight savings time flag
+   */
+  required bool tm_isdst = 9;
+}
+
+enum CalendarRepeatType {
+  NONE = 0;
+  DAILY = 1;
+  WEEKLY = 2;
+  MONTHLY_BY_DAY = 3;
+  MONTHLY_BY_DATE = 4;
+  YEARLY = 5;
+}
+  
+enum CalendarDayOfMonthType {
+  CALENDAR_1ST_SUN = 0;
+  CALENDAR_1ST_MON = 1;
+  CALENDAR_1ST_TUE = 2;
+  CALENDAR_1ST_WEN = 3;
+  CALENDAR_1ST_THU = 4;
+  CALENDAR_1ST_FRI = 5;
+  CALENDAR_1ST_SAT = 6;
+  CALENDAR_2ND_SUN = 7;
+  CALENDAR_2ND_MON = 8;
+  CALENDAR_2ND_TUE = 9;
+  CALENDAR_2ND_WEN = 10;
+  CALENDAR_2ND_THU = 11;
+  CALENDAR_2ND_FRI = 12;
+  CALENDAR_2ND_SAT = 13;
+  CALENDAR_3RD_SUN = 14;
+  CALENDAR_3RD_MON = 15;
+  CALENDAR_3RD_TUE = 16;
+  CALENDAR_3RD_WEN = 17;
+  CALENDAR_3RD_THU = 18;
+  CALENDAR_3RD_FRI = 19;
+  CALENDAR_3RD_SAT = 20;
+  CALENDAR_4TH_SUN = 21;
+  CALENDAR_4TH_MON = 22;
+  CALENDAR_4TH_TUE= 23;
+  CALENDAR_4TH_WEN = 24;
+  CALENDAR_4TH_THU = 25;
+  CALENDAR_4TH_FRI = 26;
+  CALENDAR_4TH_SAT = 27;
+  CALENDAR_LAST_SUN = 28;
+  CALENDAR_LAST_MON = 29;
+  CALENDAR_LAST_TUE = 30;
+  CALENDAR_LAST_WEN = 31;
+  CALENDAR_LAST_THU = 32;
+  CALENDAR_LAST_FRI = 33;
+  CALENDAR_LAST_SAT = 34;
+}
+    
+message Timezone {
+  required int32 offset = 1;
+  required int32 t2 = 2; // 00 - 03
+  required DST dst_start = 3;
+  required DST dst_end = 4;
+  required bool dst_observed = 5;
+  required int32 t4 = 6;
+  required int32 unknown = 7; // always 0x80 or 0x00
+  required string name = 8;
+}
+
+message DST {
+  required DayOfWeek day_of_week = 1;
+  required WeekOfMonth week_of_month = 2;
+  required Month month = 3;
+  required int32 unknown = 4;
+}
+
+enum DayOfWeek {
+  SUNDAY = 0;
+  MONDAY = 1;
+  TUESDAY = 2;
+  WEDNESDAY = 3;
+  THURSDAY = 4;
+  FRIDAY = 5;
+  SATURDAY = 6;
+}
+
+enum WeekOfMonth {
+  FIRST = 0;
+  SECOND = 1;
+  THIRD = 2;
+  FOURTH = 3;
+  LAST = 4;
+}
+
+enum Month {
+  JANUARY = 1;
+  FEBRUARY = 2;
+  MARCH = 3;
+  APRIL = 4;
+  MAY = 5;
+  JUNE = 6;
+  JULY = 7;
+  AUGUST = 8;
+  SEPTEMBER = 9;
+  OCTOBER = 10;
+  NOVEMBER = 11;
+  DECEMBER = 12;
+};
+
+message Blob {
+  required uint32 type = 1; // BD00 - BD09
+  // length is encoded in the bytes data type along with the actual data
+  required bytes data = 2;
+}
+
+enum CalendarAdvanceTypes {
+  MINUTES = 0;
+  HOURS = 1;
+  DAYS = 3;
+}
+
+enum RecAttributes {
+  DELETED = 0;
+  DIRTY = 1;
+  BUSY = 2;
+  SECRET = 3;
+  ARCHIVED = 4;
+}
