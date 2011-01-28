@@ -1,0 +1,48 @@
+These are the columns that we will likely import into google
+Use Event 1 for Anniversary. Type = "Anniversary" Value = date
+Group Membership is Category name
+
+I only have 1 IM entry listed, so I've got hardcoded values for that:
+IM 1 Type should be "Other"
+IM 1 Service is "Jabber"
+IM 1 Value is the value of the field from the Palm
+Types for Address: Work, Other, Home
+Types for Email: Other, Work, Home - use Other for all as palm doesn't diffeerentiate
+Types for phone: Main, Mobile, Other, Pager, Work
+
+
+Name
+Given Name
+Family Name
+Birthday
+Notes
+Group Membership
+E-mail 1 - Type
+E-mail 1 - Value
+E-mail 2 - Type
+E-mail 2 - Value
+IM 1 - Type
+IM 1 - Service
+IM 1 - Value
+Phone 1 - Type
+Phone 1 - Value
+Phone 2 - Type
+Phone 2 - Value
+Phone 3 - Type
+Phone 3 - Value
+Phone 4 - Type
+Phone 4 - Value
+Address 1 - Type
+Address 1 - Street
+Address 1 - City
+Address 1 - Region
+Address 1 - Postal Code
+Address 1 - Country
+Address 2 - Type
+Address 2 - Street
+Address 2 - City
+Address 2 - Region
+Address 2 - Postal Code
+Address 2 - Country
+Event 1 - Type
+Event 1 - Value
