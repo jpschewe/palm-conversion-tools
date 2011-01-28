@@ -1,0 +1,7 @@
+To build:
+ant
+
+To Run:
+./build/bin/GoogleImport.sh
+
+Options will be shown

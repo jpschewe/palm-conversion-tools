@@ -1,0 +1,9 @@
+To build:
+mkdir build
+cd build
+cmake ..
+make
+
+To Run:
+cd build
+./dump-calendar-events CalendarDB-PDat.pdb
