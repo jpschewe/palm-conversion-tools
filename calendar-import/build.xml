@@ -1,0 +1,267 @@
+<?xml version="1.0"?>
+<project name="calendar-import" default="default">
+
+	<!-- load build specific properties first -->
+	<property file="build.properties" />
+
+	<!-- basic properties for directories and the like -->
+	<property name="dir.src" value="${basedir}/src" />
+	<property name="dir.lib" value="${basedir}/lib" />
+	<property name="dir.build" value="${basedir}/build" />
+	<property name="dir.inst" value="${dir.build}/instrumented" />
+	<property name="dir.classes" value="${dir.build}/classes/main" />
+	<property name="dir.bin" value="${dir.build}/bin" />
+	<property name="dir.dist" value="${dir.build}/dist" />
+	<property name="dir.reports" value="${dir.build}/docs/reports" />
+
+	<!-- here in case a version is required as well -->
+	<property name="app.version" value="0.1" />
+	<property name="app.name" value="${ant.project.name}" />
+
+	<!-- name of main class for run -->
+	<property name="class.main" value="none" />
+	<property name="class.main.maxmemory" value="512M" />
+
+	<!-- what level of javadoc should be generated -->
+	<property name="javadoc.access" value="protected" />
+
+	<!-- compile options, may be overriden in other targets -->
+	<property name="compile.debug" value="true" />
+	<property name="compile.optimize" value="false" />
+	<property name="compile.deprecation" value="true" />
+
+	<property environment="env"/>
+	<property name="release.html.dir" value="/home/jpschewe/public_html" />
+
+	<import file="${basedir}/buildscript-imports.xml" />
+
+	<taskdef name="one-jar" classname="com.simontuffs.onejar.ant.OneJarTask">
+		<classpath>
+			<pathelement location="${dir.lib}/ant/one-jar-ant-task-0.96-jps.jar" />
+		</classpath>
+	</taskdef>
+	
+	<!-- Base/default classpath; if you don't run inside ant, copy this -->
+	<path id="classpath.base">
+		<pathelement location="${basedir}/lib/commons-cli-1.2.jar" />
+		<pathelement location="${basedir}/lib/gdata-base-1.0.jar" />
+		<pathelement location="${basedir}/lib/gdata-calendar-2.0.jar" />
+		<pathelement location="${basedir}/lib/gdata-calendar-meta-2.0.jar" />
+		<pathelement location="${basedir}/lib/gdata-client-1.0.jar" />
+		<pathelement location="${basedir}/lib/gdata-client-meta-1.0.jar" />
+		<pathelement location="${basedir}/lib/gdata-core-1.0.jar" />
+		<pathelement location="${basedir}/lib/google-collect-1.0-rc1.jar" />
+		<pathelement location="${basedir}/lib/jsr305.jar" />
+		<pathelement location="${basedir}/lib/protobuf-java-2.3.0.jar" />
+
+	</path>
+
+
+	<!-- Build, Run and Test classpaths -->
+	<path id="classpath.build">
+		<pathelement location="${dir.classes}" />
+		<path refid="classpath.base" />
+	</path>
+	<path id="classpath.run">
+		<path refid="classpath.build" />
+
+		<pathelement location="${dir.classes}" />
+
+	</path>
+
+	<!-- ==================== Setup/Prepare/Clean ==================== -->
+
+	<!-- Basic target for preparing to build / compile / run / test / etc -->
+	<target name="init">
+	  <echo level="info" message="java home: ${java.home}"/>
+	  
+		<tstamp />
+		<mkdir dir="${dir.build}" />
+		<mkdir dir="${dir.classes}" />
+		<mkdir dir="${dir.bin}" />
+		<mkdir dir="${dir.reports}" />
+	</target>
+
+	<target name="clean" description="Clean up directories; remove ALL generated files">
+		<delete dir="${dir.build}" />
+	</target>
+
+	<!-- ==================== DEFAULT ==================== -->
+	<target name="default" description="Default target" depends="init,compile" />
+
+	<!-- ==================== Compile ==================== -->
+	<target name="compile" description="Compile java to class files" depends="init">
+		<!-- compile - into the build directory -->
+		<echo level="info" taskname="compile" message="Compiling sources from: '${dir.src}'" />
+		<javac srcdir="${dir.src}" excludes="**/scratch/*.java" destdir="${dir.classes}" debug="${compile.debug}" optimize="${compile.optimize}" deprecation="${compile.deprecation}">
+			<classpath refid="classpath.base" />
+			<compilerarg value="-Xlint:unchecked" />
+		</javac>
+
+		<!-- copy any resource (non java/class) files -->
+		<copy todir="${dir.classes}">
+			<fileset dir="${dir.src}">
+				<exclude name="**/TAGS" />
+				<exclude name="**/*.java" />
+				<exclude name="**/*.class" />
+				<exclude name="**/*.html" />
+			</fileset>
+		</copy>
+		
+ 		<buildscript-one-jar scripts.dir="${dir.bin}" src.dir="${dir.classes}" scripts.path="classpath.run" script.name="GoogleImport" class.main="net.mtu.eggplant.google.GoogleImport" />
+
+	</target>
+
+	<!-- ==================== Run ! ==================== -->
+	<target name="run" depends="compile" description="Run the application">
+		<java fork="yes" classname="${class.main}" taskname="run" dir="${dir.build}" maxmemory="${class.main.maxmemory}">
+			<classpath refid="classpath.run" />
+		</java>
+	</target>
+
+	<!-- ==================== Profile ! ==================== -->
+	<target name="profile" depends="compile" description="Profile the application">
+		<java fork="yes" classname="${class.main}" taskname="profile" dir="${dir.build}">
+			<classpath refid="classpath.run" />
+			<jvmarg value="-Xrunhprof:cpu=samples,depth=15,thread=y" />
+		</java>
+	</target>
+
+	<!-- ==================== Distribution ==================== -->
+	<target name="dist" description="Create complete distribution file(s)">
+		<!-- ensure things are clean before testing -->
+		<antcall target="clean" />
+
+		<!-- create & copy the reports to the side so that the clean doesn't remove it-->
+		<mkdir dir="dist-save" />
+		<copy todir="dist-save">
+			<fileset dir="${dir.reports}" />
+		</copy>
+
+		<!-- clean everything out before a distribution is made -->
+		<antcall target="clean" />
+
+		<!-- copy the reports back -->
+		<mkdir dir="${dir.reports}" />
+		<copy todir="${dir.reports}">
+			<fileset dir="dist-save" />
+		</copy>
+		<delete dir="dist-save" />
+
+		<!-- ensure a few things are set properly for a distribution -->
+		<antcall target="-dist.real">
+			<param name="javadoc.access" value="protected" />
+			<param name="compile.debug" value="false" />
+			<param name="compile.optimize" value="true" />
+		</antcall>
+	</target>
+
+	<!-- do real work of dist target -->
+	<target name="-dist.real" depends="javadoc,compile">
+		<mkdir dir="${dir.dist}/lib" />
+
+		<!-- eventually should set or generate this, perhaps from BuildNumber task -->
+		<property name="dist.jar" value="${app.name}-${app.version}.jar" />
+
+		<!-- JAR-up all of our compiled classes -->
+		<jar jarfile="${dir.dist}/lib/${dist.jar}" index="true">
+			<fileset dir="${dir.classes}">
+				<exclude name="**/test/*" />
+			</fileset>
+		</jar>
+
+		<!-- copy index.html, ChangeLog, lib to docs directory -->
+		<mkdir dir="${dir.dist}/docs" />
+		<copy todir="${dir.dist}" flatten="true">
+			<fileset dir="${basedir}">
+				<include name="ChangeLog" />
+				<include name="docs/*" />
+			</fileset>
+			<filterset>
+				<filter token="APP-VERSION" value="${app.version}" />
+			</filterset>
+		</copy>
+
+		<!-- copy reports -->
+		<mkdir dir="${dir.dist}/docs" />
+		<copy todir="${dir.dist}/docs">
+			<fileset dir="${dir.build}/docs" />
+		</copy>
+
+		<!-- create zip files of the source and distribution directories -->
+		<zip destfile="${dir.build}/${app.name}-${app.version}.zip">
+			<zipfileset dir="${dir.dist}" />
+			<zipfileset file="${dir.build}/${dist.jar}" />
+			<zipfileset dir="lib" prefix="lib" excludes="ant/**,cobertura/**,test/**" />
+			<zipfileset dir="${dir.build}/docs" prefix="docs" />
+		</zip>
+		<zip destfile="${dir.build}/${app.name}-${app.version}-src.zip">
+			<zipfileset dir="${dir.src}" />
+		</zip>
+		<move file="${dir.build}/${app.name}-${app.version}.zip" todir="${dir.dist}" />
+		<move file="${dir.build}/${app.name}-${app.version}-src.zip" todir="${dir.dist}" />
+	</target>
+
+
+	<target name="release" description="Make a release based on the working directory" depends="dist">
+		<delete dir="${release.html.dir}/${app.name}/${app.version}" />
+		<mkdir dir="${release.html.dir}/${app.name}/${app.version}" />
+
+		<copy todir="${release.html.dir}/${app.name}/${app.version}">
+			<fileset dir="${dir.dist}" />
+		</copy>
+	</target>
+
+	<!-- ==================== JavaDoc ==================== -->
+	<target name="-javadoc.check">
+		<!-- set javadoc.access in your build.properties files to
+    change level of javadoc created (e.g. private, etc) -->
+		<condition property="javadoc.uptodate">
+			<and>
+				<available file="${dir.build}/docs/api/index.html" />
+				<uptodate targetfile="${dir.build}/docs/api/index.html">
+					<srcfiles dir="${dir.src}" includes="**/*.java" />
+				</uptodate>
+			</and>
+		</condition>
+	</target>
+
+	<target name="javadoc" description="Create Javadoc API documentation" depends="-javadoc.check" unless="javadoc.uptodate">
+		<mkdir dir="${dir.build}/docs/api" />
+		<javadoc sourcepath="${dir.src}" destdir="${dir.build}/docs/api" packagenames="*" excludepackagenames="**/test" windowtitle="${app.name}" overview="${dir.src}/overview.html" access="${javadoc.access}" splitindex="true" additionalparam="-tag pre:cm:PreConditions -tag post:cm:PostConditions -tag invariant:tc:Invariants -breakiterator">
+			<classpath refid="classpath.base" />
+
+
+		</javadoc>
+	</target>
+
+	<!-- ==================== Design By Contract (DBC) ==================== -->
+	<!-- instrument code for DBC checks -->
+	<target name="instrument" description="Instrument code for DBC checks" depends="init">
+		<mkdir dir="${dir.inst}" />
+		<java fork="yes" classname="net.mtu.eggplant.dbc.JonsAssert" taskname="instrument" failonerror="true">
+			<arg value="-d ${dir.inst}" />
+			<!-- for deugging <arg value="-prettyOutput" /> -->
+			<arg value="${dir.src}" />
+			<classpath refid="classpath.base" />
+		</java>
+	</target>
+
+	<!-- compile.dbc -->
+	<target name="compile.dbc" description="Compile everything with DBC checks" depends="instrument">
+		<antcall target="compile">
+			<param name="dir.src" value="${dir.inst}" />
+		</antcall>
+	</target>
+
+	<!-- run.dbc -->
+	<target name="run.dbc" depends="compile.dbc,run" description="Run the application with DBC checks" />
+
+	<!-- ============ Nightly Build/Check/Test/Build/Report/Etc ============ -->
+	<target name="continuous" description="Runs the continuous integration build">
+		<antcall target="clean" />
+		<antcall target="javadoc" />
+	</target>
+
+
+</project>
