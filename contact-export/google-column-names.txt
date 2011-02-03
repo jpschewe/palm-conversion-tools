@@ -9,6 +9,9 @@ IM 1 Value is the value of the field from the Palm
 Types for Address: Work, Other, Home
 Types for Email: Other, Work, Home - use Other for all as palm doesn't diffeerentiate
 Types for phone: Main, Mobile, Other, Pager, Work
+Website 1 - Type = "Home Page"
+Relation 1 - Type = "Spouse"
+Event 1 - Type = "Anniversary"
 
 
 Name
@@ -46,3 +49,9 @@ Address 2 - Postal Code
 Address 2 - Country
 Event 1 - Type
 Event 1 - Value
+Organization 1 - Name
+Organization 1 - Title
+Relation 1 - Type
+Relation 1 - Value
+Website 1 - Type 
+Website 1 - Value
