@@ -154,6 +154,7 @@ int main(int argc, char **argv) {
 	cout << "Number of entries: " << nentries << endl;
 
 	ofstream output("google-contacts.csv", ios::trunc);
+	output_header(&output);
 	for (int entnum = 0; entnum < nentries; entnum++) {
 		unsigned char *buf;
 		int attrs, cat;
@@ -174,6 +175,8 @@ int main(int argc, char **argv) {
 			printf("Error unpacking record %d!\n", entnum);
 			continue;
 		}
+
+		output_contact(&output, &contact);
 
 	}
 	output.close();
