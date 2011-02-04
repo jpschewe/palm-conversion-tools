@@ -43,56 +43,43 @@ void output_header(ofstream *output) {
 			<< "\t" << "\"Family Name\"" //
 			<< "\t" << "\"Birthday\"" //
 			<< "\t" << "\"Notes\"" //
-			<< "\t" << "\"Group Membership\"" //
-			<< "\t" << "\"E-mail 1 - Type\"" //
-			<< "\t" << "\"E-mail 1 - Value\"" //
-			<< "\t" << "\"E-mail 2 - Type\"" //
-			<< "\t" << "\"E-mail 2 - Value\"" //
-			<< "\t" << "\"E-mail 3 - Type\"" //
-			<< "\t" << "\"E-mail 3 - Value\"" //
-			<< "\t" << "\"E-mail 4 - Type\"" //
-			<< "\t" << "\"E-mail 4 - Value\"" //
-			<< "\t" << "\"E-mail 5 - Type\"" //
-			<< "\t" << "\"E-mail 5 - Value\"" //
-			<< "\t" << "\"E-mail 6 - Type\"" //
-			<< "\t" << "\"E-mail 6 - Value\"" //
-			<< "\t" << "\"E-mail 7 - Type\"" //
-			<< "\t" << "\"E-mail 7 - Value\"" //
-			<< "\t" << "\"Phone 1 - Type\"" //
-			<< "\t" << "\"Phone 1 - Value\"" //
-			<< "\t" << "\"Phone 2 - Type\"" //
-			<< "\t" << "\"Phone 2 - Value\"" //
-			<< "\t" << "\"Phone 3 - Type\"" //
-			<< "\t" << "\"Phone 3 - Value\"" //
-			<< "\t" << "\"Phone 4 - Type\"" //
-			<< "\t" << "\"Phone 4 - Value\"" //
-			<< "\t" << "\"Phone 5 - Type\"" //
-			<< "\t" << "\"Phone 5 - Value\"" //
-			<< "\t" << "\"Phone 6 - Type\"" //
-			<< "\t" << "\"Phone 6 - Value\"" //
-			<< "\t" << "\"Phone 7 - Type\"" //
-			<< "\t" << "\"Phone 7 - Value\"" //
-			<< "\t" << "\"Address 1 - Type\"" //
-			<< "\t" << "\"Address 1 - Formatted\"" //
-			<< "\t" << "\"Address 2 - Type\"" //
-			<< "\t" << "\"Address 2 - Formatted\"" //
-			<< "\t" << "\"Address 3 – Type\"" //
-			<< "\t" << "\"Address 3 - Formatted\"" //
-			<< "\t" << "\"Event 1 - Type\"" //
+			<< "\t" << "\"Group Membership\"";
+
+	for (int i = 1; i < 8; ++i) {
+		*output << "\t" << "\"E-mail " << i << " - Type\"" //
+				<< "\t" << "\"E-mail " << i << " - Value\"";
+	}
+
+	for (int i = 1; i < 8; ++i) {
+		*output << "\t" << "\"Phone " << i << " - Type\"" //
+				<< "\t" << "\"Phone " << i << " - Value\"";
+	}
+
+	for (int i = 1; i < 4; ++i) {
+		*output << "\t" << "\"Address " << i << " - Street\"" //
+				<< "\t" << "\"Address " << i << " - City\"" //
+				<< "\t" << "\"Address " << i << " - Region\"" //
+				<< "\t" << "\"Address " << i << " - Postal Code\"" //
+				<< "\t" << "\"Address " << i << " - Country\"" //
+				<< "\t" << "\"Address " << i << " - Type\"";
+	}
+
+	*output << "\t" << "\"Event 1 - Type\"" //
 			<< "\t" << "\"Event 1 - Value\"" //
 			<< "\t" << "\"Organization 1 - Name\"" //
 			<< "\t" << "\"Organization 1 - Title\"" //
 			<< "\t" << "\"Relation 1 - Type\"" //
 			<< "\t" << "\"Relation 1 - Value\"" //
 			<< "\t" << "\"Website 1 - Type\"" //
-			<< "\t" << "\"Website 1 - Value\"" //
-			<< "\t" << "\"IM 1 - Type\"" //
-			<< "\t" << "\"IM 1 - Service\"" //
-			<< "\t" << "\"IM 1 - Value\"" //
-			<< "\t" << "\"IM 2 - Type\"" //
-			<< "\t" << "\"IM 2 - Service\"" //
-			<< "\t" << "\"IM 2 - Value\"" //
-			<< endl;
+			<< "\t" << "\"Website 1 - Value\"";
+
+	for (int i = 1; i < 3; ++i) {
+		*output << "\t" << "\"IM " << i << " - Type\"" //
+				<< "\t" << "\"IM " << i << " - Service\""//
+				<< "\t" << "\"IM " << i << " - Value\"";
+	}
+
+	*output << endl;
 }
 
 const char *guessEmailType(const char *email) {
@@ -217,13 +204,13 @@ void output_contact(ofstream *output, ContactsHeader *header,
 		++emailIdx;
 	}
 
-
 	// phone numbers
 	int phoneIdx = 1;
 	for (int idx = 0; idx < 7; ++idx) {
 		const char *phone = contact->entry[contPhone1 + idx];
 		if (NULL != phone && !header->isEmail(contact->phoneLabel[idx])) {
-			*output << "\t" << "\"" << header->getGoogleTypeForPhoneType(contact->phoneLabel[idx]) << "\"";
+			*output << "\t" << "\"" << header->getGoogleTypeForPhoneType(
+					contact->phoneLabel[idx]) << "\"";
 			*output << "\t" << "\"" << phone << "\"";
 			++phoneIdx;
 		}
@@ -234,14 +221,58 @@ void output_contact(ofstream *output, ContactsHeader *header,
 		++phoneIdx;
 	}
 
+	// addresses
+	for (int i = 0; i < 3; ++i) {
+		bool hasValue = false;
 
-	// FIXME addresses
-	*output << "\t" << "\"Address 1 - Type\"" //
-			<< "\t" << "\"Address 1 - Formatted\"" //
-			<< "\t" << "\"Address 2 - Type\"" //
-			<< "\t" << "\"Address 2 - Formatted\"" //
-			<< "\t" << "\"Address 3 – Type\"" //
-			<< "\t" << "\"Address 3 - Formatted\"";
+		const char *address = contact->entry[contAddress1 + (i * 5)];
+		if (NULL != address) {
+			*output << "\t" << "\"" << address << "\"";
+			hasValue = true;
+		} else {
+			*output << "\t" << "\"\"";
+		}
+
+		const char *city = contact->entry[contCity1 + (i * 5)];
+		if (NULL != city) {
+			*output << "\t" << "\"" << city << "\"";
+			hasValue = true;
+		} else {
+			*output << "\t" << "\"\"";
+		}
+
+		const char *state = contact->entry[contState1 + (i * 5)];
+		if (NULL != state) {
+			*output << "\t" << "\"" << state << "\"";
+			hasValue = true;
+		} else {
+			*output << "\t" << "\"\"";
+		}
+
+		const char *zip = contact->entry[contZip1 + (i * 5)];
+		if (NULL != zip) {
+			*output << "\t" << "\"" << zip << "\"";
+			hasValue = true;
+		} else {
+			*output << "\t" << "\"\"";
+		}
+
+		const char *country = contact->entry[contCountry1 + (i * 5)];
+		if (NULL != country) {
+			*output << "\t" << "\"" << country << "\"";
+			hasValue = true;
+		} else {
+			*output << "\t" << "\"\"";
+		}
+
+
+		if (hasValue) {
+			*output << "\t" << "\"" << header->getGoogleTypeForAddrType(
+					contact->addressLabel[i]) << "\"";
+		} else {
+			*output << "\t\"\"";
+		}
+	}
 
 	//FIXME need to decode anniversary blob - see python code
 	*output << "\t" << "\"Event 1 - Type\"" //
@@ -271,21 +302,20 @@ void output_contact(ofstream *output, ContactsHeader *header,
 
 	if (NULL != contact->entry[contWebsite]) {
 		*output << "\t" << "\"Home Page\"" //
-				<< "\t" << "\"" << contact->entry[contWebsite] << "\"" //
-				<< endl;
+				<< "\t" << "\"" << contact->entry[contWebsite] << "\"";
 	} else {
 		*output << "\t" << "" //
-				<< "\t" << "" //
-				<< endl;
+				<< "\t" << "";
 	}
 
 	//FIXME handle IMs
-	*output << "\t" << "\"IM 1 - Type\"" //
-			<< "\t" << "\"IM 1 - Service\"" //
-			<< "\t" << "\"IM 1 - Value\"" //
-			<< "\t" << "\"IM 2 - Type\"" //
-			<< "\t" << "\"IM 2 - Service\"" //
-			<< "\t" << "\"IM 2 - Value\"";
+	for (int i = 0; i < 2; ++i) {
+		*output << "\t" << "\"IM " << i << " - Type\"" //
+				<< "\t" << "\"IM " << i << " - Service\""//
+				<< "\t" << "\"IM " << i << " - Value\"";
+	}
+
+	*output << endl;
 
 }
 
