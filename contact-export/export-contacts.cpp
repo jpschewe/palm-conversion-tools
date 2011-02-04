@@ -47,6 +47,18 @@ void output_header(ofstream *output) {
 			<< "\t" << "\"E-mail 1 - Value\"" //
 			<< "\t" << "\"E-mail 2 - Type\"" //
 			<< "\t" << "\"E-mail 2 - Value\"" //
+			<< "\t" << "\"E-mail 3 - Type\"" //
+			<< "\t" << "\"E-mail 3 - Value\"" //
+			<< "\t" << "\"E-mail 4 - Type\"" //
+			<< "\t" << "\"E-mail 4 - Value\"" //
+			<< "\t" << "\"E-mail 5 - Type\"" //
+			<< "\t" << "\"E-mail 5 - Value\"" //
+			<< "\t" << "\"E-mail 6 - Type\"" //
+			<< "\t" << "\"E-mail 6 - Value\"" //
+			<< "\t" << "\"E-mail 7 - Type\"" //
+			<< "\t" << "\"E-mail 7 - Value\"" //
+			<< "\t" << "\"E-mail 8 - Type\"" //
+			<< "\t" << "\"E-mail 8 - Value\"" //
 			<< "\t" << "\"Phone 1 - Type\"" //
 			<< "\t" << "\"Phone 1 - Value\"" //
 			<< "\t" << "\"Phone 2 - Type\"" //
@@ -55,12 +67,20 @@ void output_header(ofstream *output) {
 			<< "\t" << "\"Phone 3 - Value\"" //
 			<< "\t" << "\"Phone 4 - Type\"" //
 			<< "\t" << "\"Phone 4 - Value\"" //
+			<< "\t" << "\"Phone 5 - Type\"" //
+			<< "\t" << "\"Phone 5 - Value\"" //
+			<< "\t" << "\"Phone 6 - Type\"" //
+			<< "\t" << "\"Phone 6 - Value\"" //
+			<< "\t" << "\"Phone 7 - Type\"" //
+			<< "\t" << "\"Phone 7 - Value\"" //
+			<< "\t" << "\"Phone 8 - Type\"" //
+			<< "\t" << "\"Phone 8 - Value\"" //
 			<< "\t" << "\"Address 1 - Type\"" //
 			<< "\t" << "\"Address 1 - Formatted\"" //
 			<< "\t" << "\"Address 2 - Type\"" //
 			<< "\t" << "\"Address 2 - Formatted\"" //
 			<< "\t" << "\"Address 3 – Type\"" //
-			<< "\t" << "\"Address 3 -Formatted\"" //
+			<< "\t" << "\"Address 3 - Formatted\"" //
 			<< "\t" << "\"Event 1 - Type\"" //
 			<< "\t" << "\"Event 1 - Value\"" //
 			<< "\t" << "\"Organization 1 - Name\"" //
@@ -69,11 +89,32 @@ void output_header(ofstream *output) {
 			<< "\t" << "\"Relation 1 - Value\"" //
 			<< "\t" << "\"Website 1 - Type\"" //
 			<< "\t" << "\"Website 1 - Value\"" //
+			<< "\t" << "\"IM 1 - Type\"" //
+			<< "\t" << "\"IM 1 - Service\"" //
+			<< "\t" << "\"IM 1 - Value\"" //
+			<< "\t" << "\"IM 2 - Type\"" //
+			<< "\t" << "\"IM 2 - Service\"" //
+			<< "\t" << "\"IM 2 - Value\"" //
 			<< endl;
 }
 
 void output_contact(ofstream *output, ContactsHeader *header,
 		struct Contact *contact, int categoryIdx) {
+	int numEmails = 0;
+	int numPhones = 0;
+	for (int labelIdx = 0; labelIdx < 7; ++labelIdx) {
+
+		if (contact->entry[contPhone1 + labelIdx] != NULL) {
+			if (header->isEmail(contact->phoneLabel[labelIdx])) {
+				++numEmails;
+			} else {
+				++numPhones;
+			}
+		}
+	}
+	cout << "Num email addresses: " << numEmails << " num phones: "
+			<< numPhones << endl;
+
 #if 0
 	cout << "phone labels:" << endl;
 	for(int labelIdx=0; labelIdx<7; ++labelIdx) {
@@ -101,6 +142,7 @@ void output_contact(ofstream *output, ContactsHeader *header,
 		*output << "\t" << "\"\"";
 	}
 
+	//FIXME need to format struct tm into reasonable date
 	if (contact->birthdayFlag) {
 		*output << "\t" << "\"Birthday\"";
 	} else {
@@ -120,25 +162,52 @@ void output_contact(ofstream *output, ContactsHeader *header,
 
 	*output << "\t" << "\"" << header->getCategoryName(categoryIdx) << "\"";
 
+	//FIXME
 	*output << "\t" << "\"E-mail 1 - Type\"" //
 			<< "\t" << "\"E-mail 1 - Value\"" //
 			<< "\t" << "\"E-mail 2 - Type\"" //
 			<< "\t" << "\"E-mail 2 - Value\"" //
-			<< "\t" << "\"Phone 1 - Type\"" //
+			<< "\t" << "\"E-mail 3 - Type\"" //
+			<< "\t" << "\"E-mail 3 - Value\"" //
+			<< "\t" << "\"E-mail 4 - Type\"" //
+			<< "\t" << "\"E-mail 4 - Value\""//
+			<< "\t" << "\"E-mail 5 - Type\"" //
+			<< "\t" << "\"E-mail 5 - Value\"" //
+			<< "\t" << "\"E-mail 6 - Type\"" //
+			<< "\t" << "\"E-mail 6 - Value\"" //
+			<< "\t" << "\"E-mail 7 - Type\"" //
+			<< "\t" << "\"E-mail 7 - Value\"" //
+			<< "\t" << "\"E-mail 8 - Type\"" //
+			<< "\t" << "\"E-mail 8 - Value\"";
+
+	//FIXME phone numbers
+	*output << "\t" << "\"Phone 1 - Type\"" //
 			<< "\t" << "\"Phone 1 - Value\"" //
 			<< "\t" << "\"Phone 2 - Type\"" //
 			<< "\t" << "\"Phone 2 - Value\"" //
 			<< "\t" << "\"Phone 3 - Type\"" //
 			<< "\t" << "\"Phone 3 - Value\"" //
 			<< "\t" << "\"Phone 4 - Type\"" //
-			<< "\t" << "\"Phone 4 - Value\"" //
-			<< "\t" << "\"Address 1 - Type\"" //
+			<< "\t" << "\"Phone 4 - Value\""//
+			<< "\t" << "\"Phone 5 - Type\"" //
+			<< "\t" << "\"Phone 5 - Value\"" //
+			<< "\t" << "\"Phone 6 - Type\"" //
+			<< "\t" << "\"Phone 6 - Value\"" //
+			<< "\t" << "\"Phone 7 - Type\"" //
+			<< "\t" << "\"Phone 7 - Value\"" //
+			<< "\t" << "\"Phone 8 - Type\"" //
+			<< "\t" << "\"Phone 8 - Value\"";
+
+	// FIXME addresses
+	*output << "\t" << "\"Address 1 - Type\"" //
 			<< "\t" << "\"Address 1 - Formatted\"" //
 			<< "\t" << "\"Address 2 - Type\"" //
 			<< "\t" << "\"Address 2 - Formatted\"" //
 			<< "\t" << "\"Address 3 – Type\"" //
-			<< "\t" << "\"Address 3 -Formatted\"" //
-			<< "\t" << "\"Event 1 - Type\"" //
+			<< "\t" << "\"Address 3 - Formatted\"";
+
+	//FIXME need to decode anniversary blob - see python code
+	*output << "\t" << "\"Event 1 - Type\"" //
 			<< "\t" << "\"Event 1 - Value\"";
 
 	if (NULL != contact->entry[contCompany]) {
@@ -172,6 +241,15 @@ void output_contact(ofstream *output, ContactsHeader *header,
 				<< "\t" << "" //
 				<< endl;
 	}
+
+	//FIXME handle IMs
+	*output << "\t" << "\"IM 1 - Type\"" //
+			<< "\t" << "\"IM 1 - Service\"" //
+			<< "\t" << "\"IM 1 - Value\"" //
+			<< "\t" << "\"IM 2 - Type\"" //
+			<< "\t" << "\"IM 2 - Service\"" //
+			<< "\t" << "\"IM 2 - Value\"";
+
 }
 
 int main(int argc, char **argv) {

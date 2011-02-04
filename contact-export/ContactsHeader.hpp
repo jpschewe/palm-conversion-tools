@@ -61,7 +61,7 @@ public:
 
 	static const char *getGoogleTypeForAddrType(const char *palmAddType);
 
-	static bool isEmailType(const char *palmPhoneType);
+	bool isEmail(int phoneLabelIdx);
 
 private:
 	struct ContactAppInfo *mAppinfo;

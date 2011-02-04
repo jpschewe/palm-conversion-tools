@@ -98,8 +98,8 @@ const char *ContactsHeader::getCategoryName(int catIdx) const {
 	return mAppinfo->category.name[catIdx];
 }
 
-bool ContactsHeader::isEmailType(const char *palmPhoneType) {
-	return 0 == strncmp("E-mail", palmPhoneType, strlen("E-mail"));
+bool ContactsHeader::isEmail(int phoneLabelIdx) {
+	return 0 == strncmp("E-mail", mAppinfo->phoneLabels[phoneLabelIdx], strlen("E-mail"));
 }
 
 const char *ContactsHeader::getGoogleTypeForPhoneType(const char *palmPhoneType) {
