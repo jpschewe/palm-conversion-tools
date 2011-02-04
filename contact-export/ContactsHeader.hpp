@@ -39,33 +39,33 @@ class ContactsHeader {
 public:
 	ContactsHeader(struct ContactAppInfo *appinfo);
 	virtual ~ContactsHeader();
-  /**
-   * Get the cell provider for this contact.
-   * 
-   * @param the contact to check
-   * @return the cell provider or NULL 
-   */
-  const char *getCellProvider(struct Contact *contact) const;
+	/**
+	 * Get the cell provider for this contact.
+	 *
+	 * @param the contact to check
+	 * @return the cell provider or NULL
+	 */
+	const char *getCellProvider(struct Contact *contact) const;
 
-  /**
-   * Get the spouse for this contact.
-   * 
-   * @param the contact to check
-   * @return the spouse or NULL 
-   */
-  const char *getSpouse(struct Contact *contact) const;
+	/**
+	 * Get the spouse for this contact.
+	 *
+	 * @param the contact to check
+	 * @return the spouse or NULL
+	 */
+	const char *getSpouse(struct Contact *contact) const;
 
-  static const char *getGoogleTypeForPhoneType(const char *palmPhoneType);
+	static const char *getGoogleTypeForPhoneType(const char *palmPhoneType);
 
-  static const char *getGoogleTypeForAddrType(const char *palmAddType);
+	static const char *getGoogleTypeForAddrType(const char *palmAddType);
 
-  static bool isEmailType(const char *palmPhoneType);
-  
+	static bool isEmailType(const char *palmPhoneType);
+
 private:
-  struct ContactAppInfo *mAppinfo;
-  int mSpouseIdx;
-  int mCellProviderIdx;
-  
+	struct ContactAppInfo *mAppinfo;
+	int mSpouseIdx;
+	int mCellProviderIdx;
+
 };
 
 #endif /* CONTACTSHEADER_HPP_ */

@@ -35,7 +35,6 @@
 
 #include "ContactsHeader.hpp"
 
-
 using namespace std;
 
 void output_header(ofstream *output) {
@@ -73,33 +72,34 @@ void output_header(ofstream *output) {
 			<< endl;
 }
 
-void output_contact(ofstream *output, ContactsHeader *header, struct Contact *contact) {
+void output_contact(ofstream *output, ContactsHeader *header,
+		struct Contact *contact) {
 #if 0
 	cout << "phone labels:" << endl;
 	for(int labelIdx=0; labelIdx<7; ++labelIdx) {
-		cout <<  "\t" << contact->phoneLabel[labelIdx] << endl;
+		cout << "\t" << contact->phoneLabel[labelIdx] << endl;
 	}
 	cout << "address labels:" << endl;
 	for(int labelIdx=0; labelIdx<3; ++labelIdx) {
-		cout <<  "\t" << contact->addressLabel[labelIdx] << endl;
+		cout << "\t" << contact->addressLabel[labelIdx] << endl;
 	}
 	cout << "IM labels:" << endl;
 	for(int labelIdx=0; labelIdx<2; ++labelIdx) {
-		cout <<  "\t" << contact->IMLabel[labelIdx] << endl;
+		cout << "\t" << contact->IMLabel[labelIdx] << endl;
 	}
 #endif
 
-        if(NULL != contact->entry[contFirstname]) {
-          *output << "\"" << contact->entry[contFirstname] << "\"";
-        } else {
-          *output << "\"" << "\"" ;
-        }
+	if (NULL != contact->entry[contFirstname]) {
+		*output << "\"" << contact->entry[contFirstname] << "\"";
+	} else {
+		*output << "\"" << "\"";
+	}
 
-        if(NULL != contact->entry[contLastname]) {
-  *output			<< "\t" << "\"" << contact->entry[contLastname] << "\"";
-} else {
-  *output			<< "\t" << "\"\"";
- }
+	if (NULL != contact->entry[contLastname]) {
+		*output << "\t" << "\"" << contact->entry[contLastname] << "\"";
+	} else {
+		*output << "\t" << "\"\"";
+	}
 
 	if (contact->birthdayFlag) {
 		*output << "\t" << "\"Birthday\"";
@@ -107,8 +107,18 @@ void output_contact(ofstream *output, ContactsHeader *header, struct Contact *co
 		*output << "\t" << "";
 	}
 
-	*output << "\t" << "\"Notes\"" //
-			<< "\t" << "\"Group Membership\"" //
+	std::string notes;
+	if (NULL != contact->entry[contNote]) {
+		notes = notes + contact->entry[contNote];
+	}
+	const char* cellProvider = header->getCellProvider(contact);
+	if (NULL != cellProvider) {
+		notes = notes + "\n" + "Cell Provider: " + cellProvider;
+	}
+
+	*output << "\t" << "\"" << notes << "\"";
+
+	*output << "\t" << "\"Group Membership\"" //
 			<< "\t" << "\"E-mail 1 - Type\"" //
 			<< "\t" << "\"E-mail 1 - Value\"" //
 			<< "\t" << "\"E-mail 2 - Type\"" //
@@ -128,40 +138,39 @@ void output_contact(ofstream *output, ContactsHeader *header, struct Contact *co
 			<< "\t" << "\"Address 3 – Type\"" //
 			<< "\t" << "\"Address 3 -Formatted\"" //
 			<< "\t" << "\"Event 1 - Type\"" //
-                << "\t" << "\"Event 1 - Value\"";
+			<< "\t" << "\"Event 1 - Value\"";
 
+	if (NULL != contact->entry[contCompany]) {
+		*output << "\t" << "\"" << contact->entry[contCompany] << "\"";
+	} else {
+		*output << "\t" << "\"\"";
+	}
 
-        if(NULL != contact->entry[contCompany]) {
-          *output			<< "\t" << "\""<< contact->entry[contCompany] << "\"";
-        } else {
-        *output			<< "\t" << "\"\"";
-        }
-        
-        if(NULL != contact->entry[contTitle]) {
-          *output			<< "\t" << "\""<< contact->entry[contTitle] << "\"";
-        } else {
-*output			<< "\t" << "\"\"";
-        }
+	if (NULL != contact->entry[contTitle]) {
+		*output << "\t" << "\"" << contact->entry[contTitle] << "\"";
+	} else {
+		*output << "\t" << "\"\"";
+	}
 
-// spouse
-        const char *spouse = header->getSpouse(contact);
-        if(NULL != spouse) {
-*output			<< "\t" << "\"Spouse\"" //
-                        << "\t" << "\"" << spouse << "\"";
-        } else {
-*output			<< "\t" << "\"\"" //
-                << "\t" << "\"\"";
-        }
+	// spouse
+	const char *spouse = header->getSpouse(contact);
+	if (NULL != spouse) {
+		*output << "\t" << "\"Spouse\"" //
+				<< "\t" << "\"" << spouse << "\"";
+	} else {
+		*output << "\t" << "\"\"" //
+				<< "\t" << "\"\"";
+	}
 
-          if(NULL != contact->entry[contWebsite]) {
-          *output << "\t" << "\"Home Page\"" //
-                  << "\t" << "\"" << contact->entry[contWebsite] << "\"" //
-			<< endl;
-          } else {
-          *output << "\t" << "" //
-			<< "\t" << "" //
-			<< endl;
-          }
+	if (NULL != contact->entry[contWebsite]) {
+		*output << "\t" << "\"Home Page\"" //
+				<< "\t" << "\"" << contact->entry[contWebsite] << "\"" //
+				<< endl;
+	} else {
+		*output << "\t" << "" //
+				<< "\t" << "" //
+				<< endl;
+	}
 }
 
 int main(int argc, char **argv) {
