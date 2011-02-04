@@ -40,7 +40,6 @@ using namespace std;
 
 void output_header(ofstream *output) {
 	*output << "\"Given Name\"" //
-			<< "\t" << "\"Additional Name\"" //
 			<< "\t" << "\"Family Name\"" //
 			<< "\t" << "\"Birthday\"" //
 			<< "\t" << "\"Notes\"" //
@@ -89,10 +88,18 @@ void output_contact(ofstream *output, struct Contact *contact) {
 		cout <<  "\t" << contact->IMLabel[labelIdx] << endl;
 	}
 #endif
-        
-	*output << "\"" << "\"" //
-			<< "\t" << "\"Additional Name\"" //
-			<< "\t" << "\"Family Name\"";
+
+        if(NULL != contact->entry[contFirstname]) {
+          *output << "\"" << contact->entry[contFirstname] << "\"";
+        } else {
+          *output << "\"" << "\"" ;
+        }
+
+        if(NULL != contact->entry[contLastname]) {
+  *output			<< "\t" << "\"" << contact->entry[contLastname] << "\"";
+} else {
+  *output			<< "\t" << "\"\"";
+ }
 
 	if (contact->birthdayFlag) {
 		*output << "\t" << "\"Birthday\"";
