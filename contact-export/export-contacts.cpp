@@ -168,12 +168,15 @@ void output_contact(ofstream *output, ContactsHeader *header,
 		*output << "\t" << "\"\"";
 	}
 
-	//FIXME need to format struct tm into reasonable date
+
 	if (contact->birthdayFlag) {
-		*output << "\t" << "\"Birthday\"";
+		*output << "\t" << "\"" << (contact->birthday.tm_mon + 1) << "/"
+				<< contact->birthday.tm_mday << "/"
+				<< (contact->birthday.tm_year + 1900) << "\"";
 	} else {
 		*output << "\t" << "";
 	}
+
 
 	std::string notes;
 	if (NULL != contact->entry[contNote]) {
@@ -306,7 +309,6 @@ void output_contact(ofstream *output, ContactsHeader *header,
 		*output << "\t" << "" //
 				<< "\t" << "";
 	}
-
 
 	// IMs
 	for (int i = 0; i < 2; ++i) {
