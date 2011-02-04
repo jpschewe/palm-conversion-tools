@@ -265,7 +265,6 @@ void output_contact(ofstream *output, ContactsHeader *header,
 			*output << "\t" << "\"\"";
 		}
 
-
 		if (hasValue) {
 			*output << "\t" << "\"" << header->getGoogleTypeForAddrType(
 					contact->addressLabel[i]) << "\"";
@@ -308,11 +307,20 @@ void output_contact(ofstream *output, ContactsHeader *header,
 				<< "\t" << "";
 	}
 
-	//FIXME handle IMs
+
+	// IMs
 	for (int i = 0; i < 2; ++i) {
-		*output << "\t" << "\"IM " << i << " - Type\"" //
-				<< "\t" << "\"IM " << i << " - Service\""//
-				<< "\t" << "\"IM " << i << " - Value\"";
+		const char *im = contact->entry[contIM1 + i];
+		if (NULL != im) {
+			//TODO actually decode this rather than just using jabber
+			*output << "\t" << "\"Other\"" //
+					<< "\t" << "\"Jabber\""//
+					<< "\t" << "\"" << im << "\"";
+		} else {
+			*output << "\t" << "\"\"" //
+					<< "\t" << "\"\""//
+					<< "\t" << "\"\"";
+		}
 	}
 
 	*output << endl;
