@@ -6,6 +6,6 @@ set(CMAKE_CXX_FLAGS "-g -Wall -Werror")
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 
-ADD_EXECUTABLE (export-contacts export-contacts.cpp ) 
+ADD_EXECUTABLE (export-contacts export-contacts.cpp ContactsHeader.cpp) 
 
 TARGET_LINK_LIBRARIES (export-contacts pisock ) 

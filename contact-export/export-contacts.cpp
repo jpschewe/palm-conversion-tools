@@ -26,12 +26,15 @@
  * I'd appreciate comments/suggestions on the code jpschewe@mtu.net
  */
 
-#include <cstdio>
+#include <cstdio> // needed for pi-*
 #include <pi-file.h>
 #include <pi-macros.h>
 #include <pi-contact.h>
 #include <fstream>
 #include <iostream>
+
+#include "ContactsHeader.hpp"
+
 
 using namespace std;
 
@@ -72,6 +75,21 @@ void output_header(ofstream *output) {
 }
 
 void output_contact(ofstream *output, struct Contact *contact) {
+#if 0
+	cout << "phone labels:" << endl;
+	for(int labelIdx=0; labelIdx<7; ++labelIdx) {
+		cout <<  "\t" << contact->phoneLabel[labelIdx] << endl;
+	}
+	cout << "address labels:" << endl;
+	for(int labelIdx=0; labelIdx<3; ++labelIdx) {
+		cout <<  "\t" << contact->addressLabel[labelIdx] << endl;
+	}
+	cout << "IM labels:" << endl;
+	for(int labelIdx=0; labelIdx<2; ++labelIdx) {
+		cout <<  "\t" << contact->IMLabel[labelIdx] << endl;
+	}
+#endif
+        
 	*output << "\"" << "\"" //
 			<< "\t" << "\"Additional Name\"" //
 			<< "\t" << "\"Family Name\"";
@@ -107,10 +125,17 @@ void output_contact(ofstream *output, struct Contact *contact) {
 			<< "\t" << "\"Organization 1 - Name\"" //
 			<< "\t" << "\"Organization 1 - Title\"" //
 			<< "\t" << "\"Relation 1 - Type\"" //
-			<< "\t" << "\"Relation 1 - Value\"" //
-			<< "\t" << "\"Website 1 - Type\"" //
-			<< "\t" << "\"Website 1 - Value\"" //
+                << "\t" << "\"Relation 1 - Value\"";
+
+          if(NULL != contact->entry[contWebsite]) {
+          *output << "\t" << "\"Home Page\"" //
+                  << "\t" << "\"" << contact->entry[contWebsite] << "\"" //
 			<< endl;
+          } else {
+          *output << "\t" << "" //
+			<< "\t" << "" //
+			<< endl;
+          }
 }
 
 int main(int argc, char **argv) {
@@ -148,6 +173,7 @@ int main(int argc, char **argv) {
 		cerr << "Error unpacking contact app info" << endl;
 		return 1;
 	}
+	ContactsHeader header(&cai);
 
 	int nentries;
 	pi_file_get_entries(pf, &nentries);
