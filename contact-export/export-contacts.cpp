@@ -40,43 +40,43 @@ using namespace std;
 
 void output_header(ofstream *output) {
 	*output << "\"Given Name\"" //
-			<< "\t" << "\"Family Name\"" //
-			<< "\t" << "\"Birthday\"" //
-			<< "\t" << "\"Notes\"" //
-			<< "\t" << "\"Group Membership\"";
+			<< "," << "\"Family Name\"" //
+			<< "," << "\"Birthday\"" //
+			<< "," << "\"Notes\"" //
+			<< "," << "\"Group Membership\"";
 
 	for (int i = 1; i < 8; ++i) {
-		*output << "\t" << "\"E-mail " << i << " - Type\"" //
-				<< "\t" << "\"E-mail " << i << " - Value\"";
+		*output << "," << "\"E-mail " << i << " - Type\"" //
+				<< "," << "\"E-mail " << i << " - Value\"";
 	}
 
 	for (int i = 1; i < 8; ++i) {
-		*output << "\t" << "\"Phone " << i << " - Type\"" //
-				<< "\t" << "\"Phone " << i << " - Value\"";
+		*output << "," << "\"Phone " << i << " - Type\"" //
+				<< "," << "\"Phone " << i << " - Value\"";
 	}
 
 	for (int i = 1; i < 4; ++i) {
-		*output << "\t" << "\"Address " << i << " - Street\"" //
-				<< "\t" << "\"Address " << i << " - City\"" //
-				<< "\t" << "\"Address " << i << " - Region\"" //
-				<< "\t" << "\"Address " << i << " - Postal Code\"" //
-				<< "\t" << "\"Address " << i << " - Country\"" //
-				<< "\t" << "\"Address " << i << " - Type\"";
+		*output << "," << "\"Address " << i << " - Street\"" //
+				<< "," << "\"Address " << i << " - City\"" //
+				<< "," << "\"Address " << i << " - Region\"" //
+				<< "," << "\"Address " << i << " - Postal Code\"" //
+				<< "," << "\"Address " << i << " - Country\"" //
+				<< "," << "\"Address " << i << " - Type\"";
 	}
 
-	*output << "\t" << "\"Event 1 - Type\"" //
-			<< "\t" << "\"Event 1 - Value\"" //
-			<< "\t" << "\"Organization 1 - Name\"" //
-			<< "\t" << "\"Organization 1 - Title\"" //
-			<< "\t" << "\"Relation 1 - Type\"" //
-			<< "\t" << "\"Relation 1 - Value\"" //
-			<< "\t" << "\"Website 1 - Type\"" //
-			<< "\t" << "\"Website 1 - Value\"";
+	*output << "," << "\"Event 1 - Type\"" //
+			<< "," << "\"Event 1 - Value\"" //
+			<< "," << "\"Organization 1 - Name\"" //
+			<< "," << "\"Organization 1 - Title\"" //
+			<< "," << "\"Relation 1 - Type\"" //
+			<< "," << "\"Relation 1 - Value\"" //
+			<< "," << "\"Website 1 - Type\"" //
+			<< "," << "\"Website 1 - Value\"";
 
 	for (int i = 1; i < 3; ++i) {
-		*output << "\t" << "\"IM " << i << " - Type\"" //
-				<< "\t" << "\"IM " << i << " - Service\""//
-				<< "\t" << "\"IM " << i << " - Value\"";
+		*output << "," << "\"IM " << i << " - Type\"" //
+				<< "," << "\"IM " << i << " - Service\""//
+				<< "," << "\"IM " << i << " - Value\"";
 	}
 
 	*output << endl;
@@ -146,15 +146,15 @@ void output_contact(ofstream *output, ContactsHeader *header,
 #if 0
 	cout << "phone labels:" << endl;
 	for(int labelIdx=0; labelIdx<7; ++labelIdx) {
-		cout << "\t" << contact->phoneLabel[labelIdx] << endl;
+		cout << "," << contact->phoneLabel[labelIdx] << endl;
 	}
 	cout << "address labels:" << endl;
 	for(int labelIdx=0; labelIdx<3; ++labelIdx) {
-		cout << "\t" << contact->addressLabel[labelIdx] << endl;
+		cout << "," << contact->addressLabel[labelIdx] << endl;
 	}
 	cout << "IM labels:" << endl;
 	for(int labelIdx=0; labelIdx<2; ++labelIdx) {
-		cout << "\t" << contact->IMLabel[labelIdx] << endl;
+		cout << "," << contact->IMLabel[labelIdx] << endl;
 	}
 #endif
 
@@ -165,17 +165,17 @@ void output_contact(ofstream *output, ContactsHeader *header,
 	}
 
 	if (NULL != contact->entry[contLastname]) {
-		*output << "\t" << "\"" << contact->entry[contLastname] << "\"";
+		*output << "," << "\"" << contact->entry[contLastname] << "\"";
 	} else {
-		*output << "\t" << "\"\"";
+		*output << "," << "\"\"";
 	}
 
 	if (contact->birthdayFlag) {
-		*output << "\t" << "\"" << (contact->birthday.tm_mon + 1) << "/"
+		*output << "," << "\"" << (contact->birthday.tm_mon + 1) << "/"
 				<< contact->birthday.tm_mday << "/"
 				<< (contact->birthday.tm_year + 1900) << "\"";
 	} else {
-		*output << "\t" << "";
+		*output << "," << "";
 	}
 
 	std::string notes;
@@ -187,23 +187,23 @@ void output_contact(ofstream *output, ContactsHeader *header,
 		notes = notes + "\n" + "Cell Provider: " + cellProvider;
 	}
 
-	*output << "\t" << "\"" << notes << "\"";
+	*output << "," << "\"" << notes << "\"";
 
-	*output << "\t" << "\"" << header->getCategoryName(categoryIdx) << "\"";
+	*output << "," << "\"" << header->getCategoryName(categoryIdx) << "\"";
 
 	// email addresses
 	int emailIdx = 1;
 	for (int idx = 0; idx < 7; ++idx) {
 		const char *email = contact->entry[contPhone1 + idx];
 		if (NULL != email && header->isEmail(contact->phoneLabel[idx])) {
-			*output << "\t" << "\"" << guessEmailType(email) << "\"";
-			*output << "\t" << "\"" << email << "\"";
+			*output << "," << "\"" << guessEmailType(email) << "\"";
+			*output << "," << "\"" << email << "\"";
 			++emailIdx;
 		}
 	}
 	// output the extra blanks
 	while (emailIdx < 8) {
-		*output << "\t" << "\"\"" << "\t" << "\"\"";
+		*output << "," << "\"\"" << "," << "\"\"";
 		++emailIdx;
 	}
 
@@ -212,15 +212,15 @@ void output_contact(ofstream *output, ContactsHeader *header,
 	for (int idx = 0; idx < 7; ++idx) {
 		const char *phone = contact->entry[contPhone1 + idx];
 		if (NULL != phone && !header->isEmail(contact->phoneLabel[idx])) {
-			*output << "\t" << "\"" << header->getGoogleTypeForPhoneType(
+			*output << "," << "\"" << header->getGoogleTypeForPhoneType(
 					contact->phoneLabel[idx]) << "\"";
-			*output << "\t" << "\"" << phone << "\"";
+			*output << "," << "\"" << phone << "\"";
 			++phoneIdx;
 		}
 	}
 	// output the extra blanks
 	while (phoneIdx < 8) {
-		*output << "\t" << "\"\"" << "\t" << "\"\"";
+		*output << "," << "\"\"" << "," << "\"\"";
 		++phoneIdx;
 	}
 
@@ -230,49 +230,49 @@ void output_contact(ofstream *output, ContactsHeader *header,
 
 		const char *address = contact->entry[contAddress1 + (i * 5)];
 		if (NULL != address) {
-			*output << "\t" << "\"" << address << "\"";
+			*output << "," << "\"" << address << "\"";
 			hasValue = true;
 		} else {
-			*output << "\t" << "\"\"";
+			*output << "," << "\"\"";
 		}
 
 		const char *city = contact->entry[contCity1 + (i * 5)];
 		if (NULL != city) {
-			*output << "\t" << "\"" << city << "\"";
+			*output << "," << "\"" << city << "\"";
 			hasValue = true;
 		} else {
-			*output << "\t" << "\"\"";
+			*output << "," << "\"\"";
 		}
 
 		const char *state = contact->entry[contState1 + (i * 5)];
 		if (NULL != state) {
-			*output << "\t" << "\"" << state << "\"";
+			*output << "," << "\"" << state << "\"";
 			hasValue = true;
 		} else {
-			*output << "\t" << "\"\"";
+			*output << "," << "\"\"";
 		}
 
 		const char *zip = contact->entry[contZip1 + (i * 5)];
 		if (NULL != zip) {
-			*output << "\t" << "\"" << zip << "\"";
+			*output << "," << "\"" << zip << "\"";
 			hasValue = true;
 		} else {
-			*output << "\t" << "\"\"";
+			*output << "," << "\"\"";
 		}
 
 		const char *country = contact->entry[contCountry1 + (i * 5)];
 		if (NULL != country) {
-			*output << "\t" << "\"" << country << "\"";
+			*output << "," << "\"" << country << "\"";
 			hasValue = true;
 		} else {
-			*output << "\t" << "\"\"";
+			*output << "," << "\"\"";
 		}
 
 		if (hasValue) {
-			*output << "\t" << "\"" << header->getGoogleTypeForAddrType(
+			*output << "," << "\"" << header->getGoogleTypeForAddrType(
 					contact->addressLabel[i]) << "\"";
 		} else {
-			*output << "\t\"\"";
+			*output << ",\"\"";
 		}
 	}
 
@@ -288,43 +288,43 @@ void output_contact(ofstream *output, ContactsHeader *header,
 			int day = data & 31;
 
 			// ignore reminder as it doesn't map to google
-			*output << "\t" << "\"Anniversary\"";
-			*output << "\t" << "\"" << month << "/" << day << "/" << year
+			*output << "," << "\"Anniversary\"";
+			*output << "," << "\"" << month << "/" << day << "/" << year
 					<< "\"";
 		}
 	}
 	if (!foundAnniversary) {
-		*output << "\t\"\"\t\"\"";
+		*output << ",\"\",\"\"";
 	}
 
 	if (NULL != contact->entry[contCompany]) {
-		*output << "\t" << "\"" << contact->entry[contCompany] << "\"";
+		*output << "," << "\"" << contact->entry[contCompany] << "\"";
 	} else {
-		*output << "\t" << "\"\"";
+		*output << "," << "\"\"";
 	}
 
 	if (NULL != contact->entry[contTitle]) {
-		*output << "\t" << "\"" << contact->entry[contTitle] << "\"";
+		*output << "," << "\"" << contact->entry[contTitle] << "\"";
 	} else {
-		*output << "\t" << "\"\"";
+		*output << "," << "\"\"";
 	}
 
 	// spouse
 	const char *spouse = header->getSpouse(contact);
 	if (NULL != spouse) {
-		*output << "\t" << "\"Spouse\"" //
-				<< "\t" << "\"" << spouse << "\"";
+		*output << "," << "\"Spouse\"" //
+				<< "," << "\"" << spouse << "\"";
 	} else {
-		*output << "\t" << "\"\"" //
-				<< "\t" << "\"\"";
+		*output << "," << "\"\"" //
+				<< "," << "\"\"";
 	}
 
 	if (NULL != contact->entry[contWebsite]) {
-		*output << "\t" << "\"Home Page\"" //
-				<< "\t" << "\"" << contact->entry[contWebsite] << "\"";
+		*output << "," << "\"Home Page\"" //
+				<< "," << "\"" << contact->entry[contWebsite] << "\"";
 	} else {
-		*output << "\t" << "" //
-				<< "\t" << "";
+		*output << "," << "" //
+				<< "," << "";
 	}
 
 	// IMs
@@ -332,13 +332,13 @@ void output_contact(ofstream *output, ContactsHeader *header,
 		const char *im = contact->entry[contIM1 + i];
 		if (NULL != im) {
 			//TODO actually decode this rather than just using jabber
-			*output << "\t" << "\"Other\"" //
-					<< "\t" << "\"Jabber\""//
-					<< "\t" << "\"" << im << "\"";
+			*output << "," << "\"Other\"" //
+					<< "," << "\"Jabber\""//
+					<< "," << "\"" << im << "\"";
 		} else {
-			*output << "\t" << "\"\"" //
-					<< "\t" << "\"\""//
-					<< "\t" << "\"\"";
+			*output << "," << "\"\"" //
+					<< "," << "\"\""//
+					<< "," << "\"\"";
 		}
 	}
 
