@@ -124,6 +124,8 @@ const char *guessEmailType(const char *email) {
 	}
 }
 
+const char *BLOB_TYPE_ANNIVERSARY_ID = "Bd01";
+
 void output_contact(ofstream *output, ContactsHeader *header,
 		struct Contact *contact, int categoryIdx) {
 	int numEmails = 0;
@@ -168,7 +170,6 @@ void output_contact(ofstream *output, ContactsHeader *header,
 		*output << "\t" << "\"\"";
 	}
 
-
 	if (contact->birthdayFlag) {
 		*output << "\t" << "\"" << (contact->birthday.tm_mon + 1) << "/"
 				<< contact->birthday.tm_mday << "/"
@@ -176,7 +177,6 @@ void output_contact(ofstream *output, ContactsHeader *header,
 	} else {
 		*output << "\t" << "";
 	}
-
 
 	std::string notes;
 	if (NULL != contact->entry[contNote]) {
@@ -276,9 +276,26 @@ void output_contact(ofstream *output, ContactsHeader *header,
 		}
 	}
 
-	//FIXME need to decode anniversary blob - see python code
-	*output << "\t" << "\"Event 1 - Type\"" //
-			<< "\t" << "\"Event 1 - Value\"";
+	// this anniversary code has been submitted to pilot-link, but not merged in
+	bool foundAnniversary = false;
+	for (int i = 0; i < MAX_CONTACT_BLOBS && !foundAnniversary; ++i) {
+		if (NULL != contact->blob[i] && 0 == strncmp(contact->blob[i]->type,
+				BLOB_TYPE_ANNIVERSARY_ID, 4)) {
+			unsigned short int data = (unsigned short int) get_short(
+					contact->blob[i]->data);
+			int year = (data >> 9) + 4 + 1900;
+			int month = ((data >> 5) & 15) - 1;
+			int day = data & 31;
+
+			// ignore reminder as it doesn't map to google
+			*output << "\t" << "\"Anniversary\"";
+			*output << "\t" << "\"" << month << "/" << day << "/" << year
+					<< "\"";
+		}
+	}
+	if (!foundAnniversary) {
+		*output << "\t\"\"\t\"\"";
+	}
 
 	if (NULL != contact->entry[contCompany]) {
 		*output << "\t" << "\"" << contact->entry[contCompany] << "\"";
