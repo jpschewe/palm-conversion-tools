@@ -73,7 +73,7 @@ void output_header(ofstream *output) {
 			<< endl;
 }
 
-void output_contact(ofstream *output, struct Contact *contact) {
+void output_contact(ofstream *output, ContactsHeader *header, struct Contact *contact) {
 #if 0
 	cout << "phone labels:" << endl;
 	for(int labelIdx=0; labelIdx<7; ++labelIdx) {
@@ -128,11 +128,30 @@ void output_contact(ofstream *output, struct Contact *contact) {
 			<< "\t" << "\"Address 3 – Type\"" //
 			<< "\t" << "\"Address 3 -Formatted\"" //
 			<< "\t" << "\"Event 1 - Type\"" //
-			<< "\t" << "\"Event 1 - Value\"" //
-			<< "\t" << "\"Organization 1 - Name\"" //
-			<< "\t" << "\"Organization 1 - Title\"" //
-			<< "\t" << "\"Relation 1 - Type\"" //
-                << "\t" << "\"Relation 1 - Value\"";
+                << "\t" << "\"Event 1 - Value\"";
+
+
+        if(NULL != contact->entry[contCompany]) {
+          *output			<< "\t" << "\""<< contact->entry[contCompany] << "\"";
+        } else {
+        *output			<< "\t" << "\"\"";
+        }
+        
+        if(NULL != contact->entry[contTitle]) {
+          *output			<< "\t" << "\""<< contact->entry[contTitle] << "\"";
+        } else {
+*output			<< "\t" << "\"\"";
+        }
+
+// spouse
+        const char *spouse = header->getSpouse(contact);
+        if(NULL != spouse) {
+*output			<< "\t" << "\"Spouse\"" //
+                        << "\t" << "\"" << spouse << "\"";
+        } else {
+*output			<< "\t" << "\"\"" //
+                << "\t" << "\"\"";
+        }
 
           if(NULL != contact->entry[contWebsite]) {
           *output << "\t" << "\"Home Page\"" //
@@ -209,7 +228,7 @@ int main(int argc, char **argv) {
 			continue;
 		}
 
-		output_contact(&output, &contact);
+		output_contact(&output, &header, &contact);
 
 	}
 	output.close();

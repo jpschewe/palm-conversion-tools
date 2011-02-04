@@ -38,37 +38,47 @@ static const string ADDR_WORK_LABEL = "Addr(W)";
 static const string ADDR_HOME_LABEL = "Addr(H)";
 static const string ADDR_OTHER_LABEL = "Addr(O)";
 
-ContactsHeader::ContactsHeader(struct ContactAppInfo *appinfo) : mAppinfo(appinfo) {
-	cout << "labels:" << endl;
-	for(int labelIdx=0; labelIdx<53; ++labelIdx) {
-		cout <<  "\t" << appinfo->labels[labelIdx] << endl;
-	}
+ContactsHeader::ContactsHeader(struct ContactAppInfo *appinfo) : mAppinfo(appinfo) , mSpouseIdx(-1), mCellProviderIdx(-1) {
+  cout << "labels:" << endl;
+  for(int labelIdx=0; labelIdx<53; ++labelIdx) {
+    cout <<  "\t" << appinfo->labels[labelIdx] << endl;
+  }
 
-	for(int labelIdx=0; labelIdx<9; ++labelIdx) {
-          if(0 == strncmp("Spouse", appinfo->customLabels[labelIdx], strlen("Spouse"))) {
-            mSpouseIdx = labelIdx;
-          } else if(0 == strncmp("Cell Provider", appinfo->customLabels[labelIdx], strlen("Cell Provider"))) {
-            mCellProviderIdx = labelIdx;
-          }
-        }
+  for(int labelIdx=0; labelIdx<9; ++labelIdx) {
+    if(0 == strncmp("Spouse", appinfo->customLabels[labelIdx], strlen("Spouse"))) {
+      mSpouseIdx = labelIdx;
+    } else if(0 == strncmp("Cell Provider", appinfo->customLabels[labelIdx], strlen("Cell Provider"))) {
+      mCellProviderIdx = labelIdx;
+    }
+  }
           
-	cout << "phone labels:" << endl;
-	for(int labelIdx=0; labelIdx<8; ++labelIdx) {
-		cout <<  "\t" << appinfo->phoneLabels[labelIdx] << endl;
-	}
-	cout << "address labels:" << endl;
-	for(int labelIdx=0; labelIdx<3; ++labelIdx) {
-		cout <<  "\t" << appinfo->addrLabels[labelIdx] << endl;
-	}
-	cout << "im labels:" << endl;
-	for(int labelIdx=0; labelIdx<5; ++labelIdx) {
-		cout <<  "\t" << appinfo->IMLabels[labelIdx] << endl;
-	}
+  cout << "phone labels:" << endl;
+  for(int labelIdx=0; labelIdx<8; ++labelIdx) {
+    cout <<  "\t" << appinfo->phoneLabels[labelIdx] << endl;
+  }
+  cout << "address labels:" << endl;
+  for(int labelIdx=0; labelIdx<3; ++labelIdx) {
+    cout <<  "\t" << appinfo->addrLabels[labelIdx] << endl;
+  }
+  cout << "im labels:" << endl;
+  for(int labelIdx=0; labelIdx<5; ++labelIdx) {
+    cout <<  "\t" << appinfo->IMLabels[labelIdx] << endl;
+  }
 
 }
 
 ContactsHeader::~ContactsHeader() {
   
+}
+
+const char *ContactsHeader::getSpouse(struct Contact *contact) const {
+  if(-1 == mSpouseIdx) {
+    return NULL;
+  } else if(NULL != contact->entry[contCustom1+mSpouseIdx]) {
+    return contact->entry[contCustom1+mSpouseIdx];
+  } else {
+    return NULL;
+  }
 }
 
 bool ContactsHeader::isEmailType(const char *palmPhoneType) {
