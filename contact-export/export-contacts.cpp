@@ -39,7 +39,8 @@
 using namespace std;
 
 void output_header(ofstream *output) {
-	*output << "\"Given Name\"" //
+	*output << "\"Name\"";
+	*output << "," << "\"Given Name\"" //
 			<< "," << "\"Family Name\"" //
 			<< "," << "\"Birthday\"" //
 			<< "," << "\"Notes\"" //
@@ -128,6 +129,7 @@ const char *BLOB_TYPE_ANNIVERSARY_ID = "Bd01";
 
 void output_contact(ofstream *output, ContactsHeader *header,
 		struct Contact *contact, int categoryIdx) {
+#if 0
 	int numEmails = 0;
 	int numPhones = 0;
 	for (int labelIdx = 0; labelIdx < 7; ++labelIdx) {
@@ -141,7 +143,8 @@ void output_contact(ofstream *output, ContactsHeader *header,
 		}
 	}
 	cout << "Num email addresses: " << numEmails << " num phones: "
-			<< numPhones << endl;
+	<< numPhones << endl;
+#endif
 
 #if 0
 	cout << "phone labels:" << endl;
@@ -158,10 +161,35 @@ void output_contact(ofstream *output, ContactsHeader *header,
 	}
 #endif
 
+	bool nameStarted = false;
+	*output << "\"";
 	if (NULL != contact->entry[contFirstname]) {
-		*output << "\"" << contact->entry[contFirstname] << "\"";
+		*output << contact->entry[contFirstname];
+		nameStarted = true;
+	}
+	if (NULL != contact->entry[contLastname]) {
+		if (nameStarted) {
+			*output << " ";
+		}
+		*output << contact->entry[contLastname];
+		nameStarted = true;
+	}
+	if (!nameStarted) {
+		// use company name
+		if (NULL != contact->entry[contCompany]) {
+			*output << contact->entry[contCompany];
+			nameStarted = true;
+		}
+	}
+	if (!nameStarted) {
+		*output << "No name";
+	}
+	*output << "\"";
+
+	if (NULL != contact->entry[contFirstname]) {
+		*output << "," << "\"" << contact->entry[contFirstname] << "\"";
 	} else {
-		*output << "\"" << "\"";
+		*output << "," << "\"" << "\"";
 	}
 
 	if (NULL != contact->entry[contLastname]) {
