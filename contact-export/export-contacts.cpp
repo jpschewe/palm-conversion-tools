@@ -32,6 +32,7 @@
 #include <pi-contact.h>
 #include <fstream>
 #include <iostream>
+#include <cstring>
 
 #include "ContactsHeader.hpp"
 
@@ -57,8 +58,6 @@ void output_header(ofstream *output) {
 			<< "\t" << "\"E-mail 6 - Value\"" //
 			<< "\t" << "\"E-mail 7 - Type\"" //
 			<< "\t" << "\"E-mail 7 - Value\"" //
-			<< "\t" << "\"E-mail 8 - Type\"" //
-			<< "\t" << "\"E-mail 8 - Value\"" //
 			<< "\t" << "\"Phone 1 - Type\"" //
 			<< "\t" << "\"Phone 1 - Value\"" //
 			<< "\t" << "\"Phone 2 - Type\"" //
@@ -73,8 +72,6 @@ void output_header(ofstream *output) {
 			<< "\t" << "\"Phone 6 - Value\"" //
 			<< "\t" << "\"Phone 7 - Type\"" //
 			<< "\t" << "\"Phone 7 - Value\"" //
-			<< "\t" << "\"Phone 8 - Type\"" //
-			<< "\t" << "\"Phone 8 - Value\"" //
 			<< "\t" << "\"Address 1 - Type\"" //
 			<< "\t" << "\"Address 1 - Formatted\"" //
 			<< "\t" << "\"Address 2 - Type\"" //
@@ -96,6 +93,48 @@ void output_header(ofstream *output) {
 			<< "\t" << "\"IM 2 - Service\"" //
 			<< "\t" << "\"IM 2 - Value\"" //
 			<< endl;
+}
+
+const char *guessEmailType(const char *email) {
+	if (NULL != strcasestr(email, "comcast.net")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, "honeywell.com")) {
+		return "Work";
+	} else if (NULL != strcasestr(email, "bbn.com")) {
+		return "Work";
+	} else if (NULL != strcasestr(email, "visi.com")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, "gmail.com")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, "yahoo.com")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, "aol.com")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, "hotmail.com")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, "netscape.net")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, "e-mol.com")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, "earthlink.net")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, "msn.com")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, "sift.info")) {
+		return "Work";
+	} else if (NULL != strcasestr(email, "siftech.com")) {
+		return "Work";
+	} else if (NULL != strcasestr(email, "ibm.com")) {
+		return "Work";
+	} else if (NULL != strcasestr(email, "shoutlife.com")) {
+		return "Home";
+	} else if (NULL != strcasestr(email, ".co.us")) {
+		return "work";
+	} else if (NULL != strcasestr(email, ".net")) {
+		return "Home";
+	} else {
+		return "Other";
+	}
 }
 
 void output_contact(ofstream *output, ContactsHeader *header,
@@ -162,41 +201,39 @@ void output_contact(ofstream *output, ContactsHeader *header,
 
 	*output << "\t" << "\"" << header->getCategoryName(categoryIdx) << "\"";
 
-	//FIXME
-	*output << "\t" << "\"E-mail 1 - Type\"" //
-			<< "\t" << "\"E-mail 1 - Value\"" //
-			<< "\t" << "\"E-mail 2 - Type\"" //
-			<< "\t" << "\"E-mail 2 - Value\"" //
-			<< "\t" << "\"E-mail 3 - Type\"" //
-			<< "\t" << "\"E-mail 3 - Value\"" //
-			<< "\t" << "\"E-mail 4 - Type\"" //
-			<< "\t" << "\"E-mail 4 - Value\""//
-			<< "\t" << "\"E-mail 5 - Type\"" //
-			<< "\t" << "\"E-mail 5 - Value\"" //
-			<< "\t" << "\"E-mail 6 - Type\"" //
-			<< "\t" << "\"E-mail 6 - Value\"" //
-			<< "\t" << "\"E-mail 7 - Type\"" //
-			<< "\t" << "\"E-mail 7 - Value\"" //
-			<< "\t" << "\"E-mail 8 - Type\"" //
-			<< "\t" << "\"E-mail 8 - Value\"";
+	// email addresses
+	int emailIdx = 1;
+	for (int idx = 0; idx < 7; ++idx) {
+		const char *email = contact->entry[contPhone1 + idx];
+		if (NULL != email && header->isEmail(contact->phoneLabel[idx])) {
+			*output << "\t" << "\"" << guessEmailType(email) << "\"";
+			*output << "\t" << "\"" << email << "\"";
+			++emailIdx;
+		}
+	}
+	// output the extra blanks
+	while (emailIdx < 8) {
+		*output << "\t" << "\"\"" << "\t" << "\"\"";
+		++emailIdx;
+	}
 
-	//FIXME phone numbers
-	*output << "\t" << "\"Phone 1 - Type\"" //
-			<< "\t" << "\"Phone 1 - Value\"" //
-			<< "\t" << "\"Phone 2 - Type\"" //
-			<< "\t" << "\"Phone 2 - Value\"" //
-			<< "\t" << "\"Phone 3 - Type\"" //
-			<< "\t" << "\"Phone 3 - Value\"" //
-			<< "\t" << "\"Phone 4 - Type\"" //
-			<< "\t" << "\"Phone 4 - Value\""//
-			<< "\t" << "\"Phone 5 - Type\"" //
-			<< "\t" << "\"Phone 5 - Value\"" //
-			<< "\t" << "\"Phone 6 - Type\"" //
-			<< "\t" << "\"Phone 6 - Value\"" //
-			<< "\t" << "\"Phone 7 - Type\"" //
-			<< "\t" << "\"Phone 7 - Value\"" //
-			<< "\t" << "\"Phone 8 - Type\"" //
-			<< "\t" << "\"Phone 8 - Value\"";
+
+	// phone numbers
+	int phoneIdx = 1;
+	for (int idx = 0; idx < 7; ++idx) {
+		const char *phone = contact->entry[contPhone1 + idx];
+		if (NULL != phone && !header->isEmail(contact->phoneLabel[idx])) {
+			*output << "\t" << "\"" << header->getGoogleTypeForPhoneType(contact->phoneLabel[idx]) << "\"";
+			*output << "\t" << "\"" << phone << "\"";
+			++phoneIdx;
+		}
+	}
+	// output the extra blanks
+	while (phoneIdx < 8) {
+		*output << "\t" << "\"\"" << "\t" << "\"\"";
+		++phoneIdx;
+	}
+
 
 	// FIXME addresses
 	*output << "\t" << "\"Address 1 - Type\"" //

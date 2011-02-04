@@ -98,11 +98,12 @@ const char *ContactsHeader::getCategoryName(int catIdx) const {
 	return mAppinfo->category.name[catIdx];
 }
 
-bool ContactsHeader::isEmail(int phoneLabelIdx) {
+bool ContactsHeader::isEmail(int phoneLabelIdx) const {
 	return 0 == strncmp("E-mail", mAppinfo->phoneLabels[phoneLabelIdx], strlen("E-mail"));
 }
 
-const char *ContactsHeader::getGoogleTypeForPhoneType(const char *palmPhoneType) {
+const char *ContactsHeader::getGoogleTypeForPhoneType(int phoneLabelIdx) const {
+	const char *palmPhoneType = mAppinfo->phoneLabels[phoneLabelIdx];
 	if (0 == strncmp("Work", palmPhoneType, strlen("Work"))) {
 		return "Work";
 	} else if (0 == strncmp("Home", palmPhoneType, strlen("Home"))) {
@@ -124,7 +125,8 @@ const char *ContactsHeader::getGoogleTypeForPhoneType(const char *palmPhoneType)
 	}
 }
 
-const char *ContactsHeader::getGoogleTypeForAddrType(const char *palmAddType) {
+const char *ContactsHeader::getGoogleTypeForAddrType(int addrLabelIdx) const {
+	const char *palmAddType = mAppinfo->addrLabels[addrLabelIdx];
 	if (0 == strncmp("Addr(W)", palmAddType, strlen("Addr(W)"))) {
 		return "Work";
 	} else if (0 == strncmp("Addr(H)", palmAddType, strlen("Addr(H)"))) {

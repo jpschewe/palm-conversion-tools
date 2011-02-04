@@ -57,11 +57,11 @@ public:
 
 	const char *getCategoryName(int categoryIdx) const;
 
-	static const char *getGoogleTypeForPhoneType(const char *palmPhoneType);
+	const char *getGoogleTypeForPhoneType(int phoneLabelIdx) const;
 
-	static const char *getGoogleTypeForAddrType(const char *palmAddType);
+	const char *getGoogleTypeForAddrType(int addrLabelIdx) const;
 
-	bool isEmail(int phoneLabelIdx);
+	bool isEmail(int phoneLabelIdx) const;
 
 private:
 	struct ContactAppInfo *mAppinfo;
