@@ -73,7 +73,7 @@ void output_header(ofstream *output) {
 }
 
 void output_contact(ofstream *output, ContactsHeader *header,
-		struct Contact *contact) {
+		struct Contact *contact, int categoryIdx) {
 #if 0
 	cout << "phone labels:" << endl;
 	for(int labelIdx=0; labelIdx<7; ++labelIdx) {
@@ -118,8 +118,9 @@ void output_contact(ofstream *output, ContactsHeader *header,
 
 	*output << "\t" << "\"" << notes << "\"";
 
-	*output << "\t" << "\"Group Membership\"" //
-			<< "\t" << "\"E-mail 1 - Type\"" //
+	*output << "\t" << "\"" << header->getCategoryName(categoryIdx) << "\"";
+
+	*output << "\t" << "\"E-mail 1 - Type\"" //
 			<< "\t" << "\"E-mail 1 - Value\"" //
 			<< "\t" << "\"E-mail 2 - Type\"" //
 			<< "\t" << "\"E-mail 2 - Value\"" //
@@ -237,7 +238,7 @@ int main(int argc, char **argv) {
 			continue;
 		}
 
-		output_contact(&output, &header, &contact);
+		output_contact(&output, &header, &contact, cat);
 
 	}
 	output.close();

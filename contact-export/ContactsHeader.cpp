@@ -94,6 +94,9 @@ const char *ContactsHeader::getCellProvider(struct Contact *contact) const {
 	}
 }
 
+const char *ContactsHeader::getCategoryName(int catIdx) const {
+	return mAppinfo->category.name[catIdx];
+}
 
 bool ContactsHeader::isEmailType(const char *palmPhoneType) {
 	return 0 == strncmp("E-mail", palmPhoneType, strlen("E-mail"));

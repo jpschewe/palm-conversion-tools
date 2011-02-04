@@ -55,6 +55,8 @@ public:
 	 */
 	const char *getSpouse(struct Contact *contact) const;
 
+	const char *getCategoryName(int categoryIdx) const;
+
 	static const char *getGoogleTypeForPhoneType(const char *palmPhoneType);
 
 	static const char *getGoogleTypeForAddrType(const char *palmAddType);
