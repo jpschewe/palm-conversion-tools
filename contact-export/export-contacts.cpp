@@ -33,6 +33,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include <sstream>
 
 #include "ContactsHeader.hpp"
 
@@ -57,11 +58,7 @@ void output_header(ofstream *output) {
 	}
 
 	for (int i = 1; i < 4; ++i) {
-		*output << "," << "\"Address " << i << " - Street\"" //
-				<< "," << "\"Address " << i << " - City\"" //
-				<< "," << "\"Address " << i << " - Region\"" //
-				<< "," << "\"Address " << i << " - Postal Code\"" //
-				<< "," << "\"Address " << i << " - Country\"" //
+		*output << "," << "\"Address " << i << " - Formatted\"" //
 				<< "," << "\"Address " << i << " - Type\"";
 	}
 
@@ -79,6 +76,10 @@ void output_header(ofstream *output) {
 				<< "," << "\"IM " << i << " - Service\""//
 				<< "," << "\"IM " << i << " - Value\"";
 	}
+
+	// extra fields so that Google pulls all extended attributes
+	*output
+			<< ",\"Yomi Name\",\"Given Name Yomi\",\"Additional Name Yomi\",\"Family Name Yomi\",\"Name Prefix\",\"Name Suffix\",\"Initials\",\"Nickname\",\"Short Name\",\"Maiden Name\",\"Gender\",\"Location\",\"Billing Information\",\"Directory Server\",\"Mileage\",\"Occupation\",\"Hobby\",\"Sensitivity\",\"Priority\",\"Subject\"";
 
 	*output << endl;
 }
@@ -199,9 +200,9 @@ void output_contact(ofstream *output, ContactsHeader *header,
 	}
 
 	if (contact->birthdayFlag) {
-		*output << "," << "\"" << (contact->birthday.tm_mon + 1) << "/"
-				<< contact->birthday.tm_mday << "/"
-				<< (contact->birthday.tm_year + 1900) << "\"";
+		*output << "," << "\"" << (contact->birthday.tm_year + 1900) << "-"
+				<< (contact->birthday.tm_mon + 1) << "-"
+				<< contact->birthday.tm_mday << "\"";
 	} else {
 		*output << "," << "";
 	}
@@ -217,7 +218,8 @@ void output_contact(ofstream *output, ContactsHeader *header,
 
 	*output << "," << "\"" << notes << "\"";
 
-	*output << "," << "\"" << header->getCategoryName(categoryIdx) << "\"";
+	*output << "," << "\"" << header->getCategoryName(categoryIdx)
+			<< " ::: * My Contacts\"";
 
 	// email addresses
 	int emailIdx = 1;
@@ -255,52 +257,56 @@ void output_contact(ofstream *output, ContactsHeader *header,
 	// addresses
 	for (int i = 0; i < 3; ++i) {
 		bool hasValue = false;
+		stringstream stream;
 
 		const char *address = contact->entry[contAddress1 + (i * 5)];
 		if (NULL != address) {
-			*output << "," << "\"" << address << "\"";
+			stream << address;
 			hasValue = true;
-		} else {
-			*output << "," << "\"\"";
 		}
 
 		const char *city = contact->entry[contCity1 + (i * 5)];
 		if (NULL != city) {
-			*output << "," << "\"" << city << "\"";
+			if (hasValue) {
+				stream << endl;
+			}
+			stream << city;
 			hasValue = true;
-		} else {
-			*output << "," << "\"\"";
 		}
 
 		const char *state = contact->entry[contState1 + (i * 5)];
 		if (NULL != state) {
-			*output << "," << "\"" << state << "\"";
+			if (NULL != city) {
+				stream << ", ";
+			}
+			stream << state;
 			hasValue = true;
-		} else {
-			*output << "," << "\"\"";
 		}
 
 		const char *zip = contact->entry[contZip1 + (i * 5)];
 		if (NULL != zip) {
-			*output << "," << "\"" << zip << "\"";
+			if (NULL != state) {
+				stream << " ";
+			}
+			stream << zip;
 			hasValue = true;
-		} else {
-			*output << "," << "\"\"";
 		}
 
 		const char *country = contact->entry[contCountry1 + (i * 5)];
 		if (NULL != country) {
-			*output << "," << "\"" << country << "\"";
+			if (hasValue) {
+				stream << endl;
+			}
+			stream << country;
 			hasValue = true;
-		} else {
-			*output << "," << "\"\"";
 		}
 
 		if (hasValue) {
+			*output << ",\"" << stream.str() << "\"";
 			*output << "," << "\"" << header->getGoogleTypeForAddrType(
 					contact->addressLabel[i]) << "\"";
 		} else {
-			*output << ",\"\"";
+			*output << ",\"\",\"\"";
 		}
 	}
 
@@ -317,8 +323,9 @@ void output_contact(ofstream *output, ContactsHeader *header,
 
 			// ignore reminder as it doesn't map to google
 			*output << "," << "\"Anniversary\"";
-			*output << "," << "\"" << month << "/" << day << "/" << year
+			*output << "," << "\"" << year << "-" << month << "-" << day
 					<< "\"";
+			foundAnniversary = true;
 		}
 	}
 	if (!foundAnniversary) {
@@ -369,6 +376,9 @@ void output_contact(ofstream *output, ContactsHeader *header,
 					<< "," << "\"\"";
 		}
 	}
+
+	// extended fields to keep Google happy
+	*output << ",,,,,,,,,,,,,,,,,,,,";
 
 	*output << endl;
 
