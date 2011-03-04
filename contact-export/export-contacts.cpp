@@ -318,7 +318,7 @@ void output_contact(ofstream *output, ContactsHeader *header,
 			unsigned short int data = (unsigned short int) get_short(
 					contact->blob[i]->data);
 			int year = (data >> 9) + 4 + 1900;
-			int month = ((data >> 5) & 15) - 1;
+			int month = ((data >> 5) & 15);
 			int day = data & 31;
 
 			// ignore reminder as it doesn't map to google
