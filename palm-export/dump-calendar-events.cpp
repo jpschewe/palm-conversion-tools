@@ -451,6 +451,7 @@ void write_events(pi_file_t *pf, nmeg::Calendar &proto_calendar) {
     pi_buffer_free(pi_buf);
     free_CalendarEvent(&appt);
   }
+  cout << "End of converting events" << endl;
 }
 
 int main(int argc, char **argv) {
@@ -490,5 +491,6 @@ int main(int argc, char **argv) {
   // Optional:  Delete all global objects allocated by libprotobuf.
   google::protobuf::ShutdownProtobufLibrary();
 
+  cout << "end" << endl;
   return 0;
 }
