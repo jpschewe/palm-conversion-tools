@@ -81,6 +81,9 @@ import com.google.gdata.data.extensions.When;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
+//TODO handle spaces in calendar category mappings, the current commandline parser
+// doesn't handle spaces and makes them separate arguments
+
 /**
  * @author jpschewe
  * 
