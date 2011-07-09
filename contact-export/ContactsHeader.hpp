@@ -48,12 +48,22 @@ public:
 	const char *getCellProvider(struct Contact *contact) const;
 
 	/**
+	 * The index for cell provider, intended to be added to contCustom1. -1 if no cell provider custom.
+	 */
+	int getCellProviderIndex() const;
+
+	/**
 	 * Get the spouse for this contact.
 	 *
 	 * @param the contact to check
 	 * @return the spouse or NULL
 	 */
 	const char *getSpouse(struct Contact *contact) const;
+
+	/**
+	 * The index for spouse, intended to be added to contCustom1.. -1 if no spouse custom.
+	 */
+	int getSpouseIndex() const;
 
 	const char *getCategoryName(int categoryIdx) const;
 

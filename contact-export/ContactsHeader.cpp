@@ -84,6 +84,10 @@ const char *ContactsHeader::getSpouse(struct Contact *contact) const {
 	}
 }
 
+int ContactsHeader::getCellProviderIndex() const {
+	return mCellProviderIdx;
+}
+
 const char *ContactsHeader::getCellProvider(struct Contact *contact) const {
 	if (-1 == mCellProviderIdx) {
 		return NULL;
@@ -92,6 +96,10 @@ const char *ContactsHeader::getCellProvider(struct Contact *contact) const {
 	} else {
 		return NULL;
 	}
+}
+
+int ContactsHeader::getSpouseIndex() const {
+	return mCellProviderIdx;
 }
 
 const char *ContactsHeader::getCategoryName(int catIdx) const {

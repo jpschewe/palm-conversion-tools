@@ -215,6 +215,15 @@ void output_contact(ofstream *output, ContactsHeader *header,
 	if (NULL != cellProvider) {
 		notes = notes + "\n" + "Cell Provider: " + cellProvider;
 	}
+	for (int i = contCustom1; i <= contCustom9; ++i) {
+		if (NULL != contact->entry[i] //
+				&& !(-1 != header->getCellProviderIndex()
+						&& header->getCellProviderIndex() + contCustom1 == i) //
+				&& !(-1 != header->getSpouseIndex() && header->getSpouseIndex()
+						+ contCustom1 == i)) {
+			notes = notes + "\n" + contact->entry[i];
+		}
+	}
 
 	*output << "," << "\"" << notes << "\"";
 
