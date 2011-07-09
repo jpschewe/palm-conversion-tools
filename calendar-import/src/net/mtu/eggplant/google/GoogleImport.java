@@ -218,33 +218,37 @@ public class GoogleImport {
 				+ " into calendar id: " + calendar.getId() + " self link: "
 				+ calendar.getSelfLink().getHref());
 		final URL calendarURL = getCalendarURL(calendar);
-		for (final Palm.CalendarEvent palmEvent : categoryToEvents
-				.get(category)) {
-			LOGGER.log(Level.FINER, "Importing event: " + palmEvent);
+		List<CalendarEvent> events = categoryToEvents.get(category);
+		if (null != events && !events.isEmpty()) {
+			for (final Palm.CalendarEvent palmEvent : categoryToEvents
+					.get(category)) {
+				LOGGER.log(Level.FINER, "Importing event: " + palmEvent);
 
-			CalendarEventEntry googleEvent = convertToGoogle(palmEvent);
-			int count = 0;
-			boolean success = false;
-			while (!success && count < 5) {
-				++count;
-				try {
-					googleEvent = service.insert(calendarURL, googleEvent);
-					success = true;
-				} catch (final ServiceException e) {
-					success = false;
-					LOGGER.warning("Error importing event, trying again: "
-							+ e.getMessage());
+				CalendarEventEntry googleEvent = convertToGoogle(palmEvent);
+				int count = 0;
+				boolean success = false;
+				while (!success && count < 5) {
+					++count;
+					try {
+						googleEvent = service.insert(calendarURL, googleEvent);
+						success = true;
+					} catch (final ServiceException e) {
+						success = false;
+						LOGGER.warning("Error importing event, trying again: "
+								+ e.getMessage());
+					}
 				}
-			}
-			if (!success) {
-				LOGGER.severe("Error importing event. Retries failed");
-				throw new RuntimeException("Import failed");
-			}
+				if (!success) {
+					LOGGER.severe("Error importing event. Retries failed");
+					throw new RuntimeException("Import failed");
+				}
 
-			addExceptions(calendarURL, palmEvent, googleEvent);
+				addExceptions(calendarURL, palmEvent, googleEvent);
 
-			// LOGGER.log(Level.INFO, "Exiting after 1 event for debugging");
-			// return;
+				// LOGGER.log(Level.INFO,
+				// "Exiting after 1 event for debugging");
+				// return;
+			}
 		}
 	}
 
