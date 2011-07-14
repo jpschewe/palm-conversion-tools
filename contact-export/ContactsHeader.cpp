@@ -107,7 +107,9 @@ const char *ContactsHeader::getCategoryName(int catIdx) const {
 }
 
 bool ContactsHeader::isEmail(int phoneLabelIdx) const {
-	return 0 == strncmp("E-mail", mAppinfo->phoneLabels[phoneLabelIdx], strlen("E-mail"));
+	return 0 == strncmp("E-mail", mAppinfo->phoneLabels[phoneLabelIdx], strlen("E-mail"))
+			|| 0 == strncmp("Email", mAppinfo->phoneLabels[phoneLabelIdx], strlen("Email"));
+
 }
 
 const char *ContactsHeader::getGoogleTypeForPhoneType(int phoneLabelIdx) const {
@@ -121,6 +123,8 @@ const char *ContactsHeader::getGoogleTypeForPhoneType(int phoneLabelIdx) const {
 	} else if (0 == strncmp("Other", palmPhoneType, strlen("Other"))) {
 		return "Other";
 	} else if (0 == strncmp("E-mail", palmPhoneType, strlen("E-mail"))) {
+		throw "Should not see email type here";
+	} else if (0 == strncmp("Email", palmPhoneType, strlen("Email"))) {
 		throw "Should not see email type here";
 	} else if (0 == strncmp("Main", palmPhoneType, strlen("Main"))) {
 		return "Main";
